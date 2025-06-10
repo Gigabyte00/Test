@@ -1,0 +1,91 @@
+// Prisma schema for Merchant Services App
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  VENDOR
+  CUSTOMER
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  userId    String   @unique // Clerk user ID
+  email     String   @unique
+  name      String?
+  phone     String?
+  role      Role     @default(CUSTOMER)
+  vendorId  Int?
+  vendor    Vendor?  @relation(fields: [vendorId], references: [id])
+  createdAt DateTime @default(now())
+  transactions Transaction[]
+}
+
+model Vendor {
+  id          Int     @id @default(autoincrement())
+  clerkUserId String  @unique
+  companyName String?
+  wallet      String?
+  apiKey      String?
+  users       User[]
+}
+
+model Transaction {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  amount    Int
+  gateway   String
+  createdAt DateTime @default(now())
+}
+
+model Merchant {
+  id            String      @id @default(cuid())
+  userId        String      // Clerk user ID
+  businessName  String
+  businessType  String
+  website       String?
+  contactEmail  String
+  bankAccount   BankAccount @relation(fields: [bankAccountId], references: [id])
+  bankAccountId String
+  ownerKyc      OwnerKYC    @relation(fields: [ownerKycId], references: [id])
+  ownerKycId    String
+  pricingPlan   PricingPlan @default(STARTER)
+  status        String?     @default("PENDING")
+  fortisMerchantId String?  @unique
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model BankAccount {
+  id             String   @id @default(cuid())
+  bankName       String
+  routingNumber  String
+  accountNumber  String
+  voidedCheckUrl String?
+  merchant       Merchant?
+}
+
+model OwnerKYC {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  ssnLast4  String
+  dob       DateTime
+  address   String
+  govIdUrl  String?
+  merchant  Merchant?
+}
+
+enum PricingPlan {
+  STARTER
+  PRO
+  CUSTOM
+}
