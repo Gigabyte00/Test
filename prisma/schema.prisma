@@ -1,0 +1,47 @@
+// Prisma schema for Merchant Services App
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  VENDOR
+  CUSTOMER
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  userId    String   @unique // Clerk user ID
+  email     String   @unique
+  name      String?
+  phone     String?
+  role      Role     @default(CUSTOMER)
+  vendorId  Int?
+  vendor    Vendor?  @relation(fields: [vendorId], references: [id])
+  createdAt DateTime @default(now())
+  transactions Transaction[]
+}
+
+model Vendor {
+  id          Int     @id @default(autoincrement())
+  clerkUserId String  @unique
+  companyName String?
+  wallet      String?
+  apiKey      String?
+  users       User[]
+}
+
+model Transaction {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  amount    Int
+  gateway   String
+  createdAt DateTime @default(now())
+}
