@@ -15,6 +15,10 @@ The profile page lets users manage passwords and toggle 2FA.
 
 Admin users can view analytics under `/admin/analytics` to monitor transaction history.
 
+## Merchant Onboarding
+
+New vendors can complete a multi-step onboarding wizard under `/onboarding`. The wizard collects business information, bank details, owner KYC, and pricing plan selection before submitting to `/onboarding/api/submit`.
+
 
 ## Payment Gateways
 
