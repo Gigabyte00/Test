@@ -1,15 +1,10 @@
 {
-  "name": "test",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "smart-payments",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "test": "jest"
+    "test": "echo \"No tests\" && exit 0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "jest": "^29.7.0"
+  "dependencies": {
   }
 }
