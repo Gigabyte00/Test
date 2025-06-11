@@ -34,10 +34,11 @@ See the `multi-gateway-connector` directory for a base connector that unifies th
 
 ## Design Resources
 
-Figma starter and template files live in the `design` folder:
+##Figma starter and template files live in the `design` folder:
 
-- `figma-starter.fig` – foundation styles and components
-- `dashboard-template.fig` – merchant dashboard layout
-- `billing-flow-template.fig` – billing and checkout flow screens
+##- `figma-starter.fig` – foundation styles and components
+##- `dashboard-template.fig` – merchant dashboard layout
+##- `billing-flow-template.fig` – billing and checkout flow screens
 
-Import these files into Figma to explore or customize the UI.
+##Import these files into Figma to explore or customize the UI.
+
