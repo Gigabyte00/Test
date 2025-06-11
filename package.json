@@ -1,10 +1,27 @@
 {
   "name": "smart-payments",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "Merchant Services App",
+  "main": "index.js",
   "private": true,
   "scripts": {
-    "test": "echo \"No tests\" && exit 0"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "seed": "ts-node prisma/seed.ts",
+    "seed:clerk": "ts-node scripts/seedClerkUsers.ts",
+    "test": "echo \"No tests specified\""
   },
   "dependencies": {
+    "@clerk/nextjs": "^4.29.1",
+    "@prisma/client": "^5.9.1",
+    "next": "13.5.6",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.9.1",
+    "typescript": "5.3.3",
+    "ts-node": "10.9.1"
   }
 }
