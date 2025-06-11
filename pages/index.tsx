@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+
 export default function HomePage() {
   return (
     <div style={{ padding: 20 }}>

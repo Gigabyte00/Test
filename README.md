@@ -15,6 +15,7 @@ The profile page lets users manage passwords and toggle 2FA.
 
 Admin users can view analytics under `/admin/analytics` to monitor transaction history.
 
+
 ## Payment Gateways
 
 This app integrates multiple payment providers using a unified adapter pattern. Supported gateways include:
@@ -34,11 +35,11 @@ See the `multi-gateway-connector` directory for a base connector that unifies th
 
 ## Design Resources
 
-##Figma starter and template files live in the `design` folder:
+Figma starter and template files live in the `design` folder:
 
-##- `figma-starter.fig` – foundation styles and components
-##- `dashboard-template.fig` – merchant dashboard layout
-##- `billing-flow-template.fig` – billing and checkout flow screens
+- `figma-starter.fig` – foundation styles and components
+- `dashboard-template.fig` – merchant dashboard layout
+- `billing-flow-template.fig` – billing and checkout flow screens
 
-##Import these files into Figma to explore or customize the UI.
+Import these files into Figma to explore or customize the UI.
 
