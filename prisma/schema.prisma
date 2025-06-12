@@ -57,6 +57,7 @@ model Merchant {
   bankAccountId String
   ownerKyc      OwnerKYC    @relation(fields: [ownerKycId], references: [id])
   ownerKycId    String
+  kycStatus     String?     @default("PENDING")
   pricingPlan   PricingPlan @default(STARTER)
   status        String?     @default("PENDING")
   fortisMerchantId String?  @unique

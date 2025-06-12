@@ -59,6 +59,19 @@ export default function OnboardingWizard() {
     const res = await fetch('/onboarding/api/submit', { method: 'POST', body: formData });
     alert(res.ok ? 'Submitted!' : 'Error');
   };
+  const startKyc = async () => {
+    const res = await fetch('/api/kyc/create-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: user?.id }),
+    });
+    if (res.ok) {
+      const { url } = await res.json();
+      window.location.href = url as string;
+    } else {
+      alert('Failed to start KYC');
+    }
+  };
   const startFortis = async () => {
     const res = await fetch('/api/fortis/startApplication', {
       method: 'POST',
@@ -111,6 +124,7 @@ export default function OnboardingWizard() {
             <input {...register('dob')} type="date" className="input" />
             <input {...register('address')} placeholder="Address" className="input" />
             <label className="block">Upload Government ID <input type="file" {...register('govId')} /></label>
+            <button type="button" onClick={startKyc} className="btn-primary mt-2">Verify Identity with Stripe</button>
           </>
         )}
         {step === 3 && (

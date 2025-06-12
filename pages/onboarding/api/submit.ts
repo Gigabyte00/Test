@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import formidable from 'formidable';
 import { prisma } from '../../lib/prisma';
 
-
 export const config = {
   api: { bodyParser: false }
 };
@@ -62,6 +61,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error(error);
       return res.status(500).json({ error: 'DB save failed' });
     }
-
   });
 }

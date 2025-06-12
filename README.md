@@ -19,10 +19,13 @@ Admin users can view analytics under `/admin/analytics` to monitor transaction h
 
 New vendors can complete a multi-step onboarding wizard under `/onboarding`. The wizard collects business information, bank details, owner KYC, and pricing plan selection before submitting to `/onboarding/api/submit`.
 
+### KYC Verification via Stripe Identity
+
+During the owner KYC step, merchants can click **Verify Identity with Stripe** which starts a Stripe Identity session via `/api/kyc/create-session`. When verification succeeds, Stripe calls `/api/stripe/kyc-webhook` to update the merchant record with `kycStatus = "VERIFIED"`.
+
 ### FortisPay Hosted Application
 
 After submitting the onboarding form, merchants can be redirected to FortisPay's hosted application to finish underwriting. Step 5 of the wizard includes a **Complete Fortis Application** button which calls `/api/fortis/startApplication`. FortisPay then notifies the app via `/api/fortis/webhook` when the merchant is approved.
-
 
 ## Payment Gateways
 
@@ -50,4 +53,3 @@ Figma starter and template files live in the `design` folder:
 - `billing-flow-template.fig` – billing and checkout flow screens
 
 Import these files into Figma to explore or customize the UI.
-
