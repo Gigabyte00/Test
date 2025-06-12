@@ -59,7 +59,6 @@ export default function OnboardingWizard() {
     const res = await fetch('/onboarding/api/submit', { method: 'POST', body: formData });
     alert(res.ok ? 'Submitted!' : 'Error');
   };
-
   const startKyc = async () => {
     const res = await fetch('/api/kyc/create-session', {
       method: 'POST',
@@ -73,7 +72,6 @@ export default function OnboardingWizard() {
       alert('Failed to start KYC');
     }
   };
-
   const startFortis = async () => {
     const res = await fetch('/api/fortis/startApplication', {
       method: 'POST',
@@ -91,7 +89,6 @@ export default function OnboardingWizard() {
       alert('Failed to start Fortis application');
     }
   };
-
   const startStripeConnect = async () => {
     const res = await fetch('/api/stripe/connect', {
       method: 'POST',
@@ -108,7 +105,6 @@ export default function OnboardingWizard() {
       alert('Failed to start Stripe onboarding');
     }
   };
-
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl mx-auto p-6 bg-white rounded shadow">
       <h2 className="text-xl font-bold mb-4">Step {step + 1}: {steps[step]}</h2>

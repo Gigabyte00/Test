@@ -1,8 +1,9 @@
 {
-  "name": "test",
+  "name": "smart-payments",
   "version": "1.0.0",
   "description": "Merchant Services App",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
