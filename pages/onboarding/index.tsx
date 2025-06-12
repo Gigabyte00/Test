@@ -89,6 +89,22 @@ export default function OnboardingWizard() {
       alert('Failed to start Fortis application');
     }
   };
+  const startStripeConnect = async () => {
+    const res = await fetch('/api/stripe/connect', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: user?.id,
+        email: watch('contact'),
+      }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      window.location.href = data.url;
+    } else {
+      alert('Failed to start Stripe onboarding');
+    }
+  };
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl mx-auto p-6 bg-white rounded shadow">
       <h2 className="text-xl font-bold mb-4">Step {step + 1}: {steps[step]}</h2>
@@ -138,6 +154,7 @@ export default function OnboardingWizard() {
           <>
             <pre className="bg-gray-100 p-4 rounded text-xs overflow-x-auto">{JSON.stringify(watch(), null, 2)}</pre>
             <button type="button" onClick={startFortis} className="btn-primary mt-4">Complete Fortis Application</button>
+            <button type="button" onClick={startStripeConnect} className="btn-primary mt-2">Setup Stripe Payouts</button>
           </>
         )}
         <div className="flex justify-between">

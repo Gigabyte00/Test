@@ -4,7 +4,7 @@ This project demonstrates account management using **Clerk**, **Next.js**, and *
 
 ## Setup
 
-1. Copy `.env.example` to `.env` and fill in database and Clerk credentials.
+1. Copy `.env.example` to `.env` and fill in database, Clerk, Stripe, and other gateway credentials.
 2. Run `npx prisma generate` and `npx prisma migrate dev` to set up the database.
 3. Seed the database with `npm run seed`.
    Run `npm run seed:clerk` to create matching Clerk users.
@@ -26,6 +26,10 @@ During the owner KYC step, merchants can click **Verify Identity with Stripe** w
 ### FortisPay Hosted Application
 
 After submitting the onboarding form, merchants can be redirected to FortisPay's hosted application to finish underwriting. Step 5 of the wizard includes a **Complete Fortis Application** button which calls `/api/fortis/startApplication`. FortisPay then notifies the app via `/api/fortis/webhook` when the merchant is approved.
+
+### Stripe Connect Payouts
+
+Merchants can also set up payouts through **Stripe Connect Standard**. The onboarding wizard offers a **Setup Stripe Payouts** button that calls `/api/stripe/connect` to create an account onboarding link. After completing the Stripe flow, merchants return to `/onboarding/stripe-return` and their `stripeAccountId` is stored in the database.
 
 ## Payment Gateways
 
