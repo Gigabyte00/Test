@@ -59,7 +59,23 @@ export default function OnboardingWizard() {
     const res = await fetch('/onboarding/api/submit', { method: 'POST', body: formData });
     alert(res.ok ? 'Submitted!' : 'Error');
   };
-
+  const startFortis = async () => {
+    const res = await fetch('/api/fortis/startApplication', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        businessName: watch('businessName'),
+        contactEmail: watch('contact'),
+        userId: user?.id
+      })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      window.location.href = data.applicationUrl;
+    } else {
+      alert('Failed to start Fortis application');
+    }
+  };
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl mx-auto p-6 bg-white rounded shadow">
       <h2 className="text-xl font-bold mb-4">Step {step + 1}: {steps[step]}</h2>
@@ -105,7 +121,10 @@ export default function OnboardingWizard() {
           </>
         )}
         {step === 4 && (
-          <pre className="bg-gray-100 p-4 rounded text-xs overflow-x-auto">{JSON.stringify(watch(), null, 2)}</pre>
+          <>
+            <pre className="bg-gray-100 p-4 rounded text-xs overflow-x-auto">{JSON.stringify(watch(), null, 2)}</pre>
+            <button type="button" onClick={startFortis} className="btn-primary mt-4">Complete Fortis Application</button>
+          </>
         )}
         <div className="flex justify-between">
           {step > 0 && <button type="button" onClick={back} className="btn">Back</button>}

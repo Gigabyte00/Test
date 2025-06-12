@@ -58,6 +58,8 @@ model Merchant {
   ownerKyc      OwnerKYC    @relation(fields: [ownerKycId], references: [id])
   ownerKycId    String
   pricingPlan   PricingPlan @default(STARTER)
+  status        String?     @default("PENDING")
+  fortisMerchantId String?  @unique
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 }
