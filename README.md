@@ -23,6 +23,7 @@ New vendors can complete a multi-step onboarding wizard under `/onboarding`. The
 
 After submitting the onboarding form, merchants can be redirected to FortisPay's hosted application to finish underwriting. Step 5 of the wizard includes a **Complete Fortis Application** button which calls `/api/fortis/startApplication`. FortisPay then notifies the app via `/api/fortis/webhook` when the merchant is approved.
 
+
 ## Payment Gateways
 
 This app integrates multiple payment providers using a unified adapter pattern. Supported gateways include:
@@ -49,3 +50,4 @@ Figma starter and template files live in the `design` folder:
 - `billing-flow-template.fig` – billing and checkout flow screens
 
 Import these files into Figma to explore or customize the UI.
+
