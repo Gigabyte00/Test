@@ -64,13 +64,16 @@ async function main() {
       businessType: 'LLC',
       contactEmail: 'vendor@example.com',
       preferredProvider: 'First Data',
+
       bankAccountId: bankAccount.id,
       ownerKycId: ownerKyc.id,
       fiservStatus: 'PENDING',
       worldpayStatus: 'PENDING',
+
       pricingPlan: 'STARTER',
     }
   });
+
 
   await prisma.transaction.createMany({
     data: [
