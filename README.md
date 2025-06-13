@@ -10,6 +10,8 @@ This project demonstrates account management using **Clerk**, **Next.js**, and *
    Then run `npm run seed:clerk` to create matching Clerk users via the
    `scripts/seedClerkUsers.ts` utility. This ensures each Prisma user record
    has a corresponding account in Clerk for authentication.
+
+
 4. Start the app with `npm run dev`.
 
 Routes under `/dashboard` require login. Admin pages under `/admin` are restricted to admin users and vendor pages under `/vendor` are restricted to vendors.
@@ -17,13 +19,17 @@ The profile page lets users manage passwords and toggle 2FA.
 
 Admin users can lock or unlock accounts, reset passwords, and edit vendor details from the admin dashboard. An analytics screen under `/admin/analytics` shows recent transactions.
 
+
+
+
 ### Merchant Onboarding Dashboard
 
-Visit `/dashboard` to manage onboarding for all merchants. The dashboard loads data from `/api/admin/merchants` and lists each provider's status. Admins can manually mark statuses with `/api/admin/mark-status`, resend onboarding links via `/api/admin/resend-onboarding`, and send reminder emails via `/api/admin/send-reminders`.
+Visit `/dashboard` to manage onboarding for all merchants. The dashboard lets you search merchants by business name or email, view details in a modal, manually mark statuses, and resend onboarding links. The backend provides admin API routes to update status (`/api/admin/mark-status`), resend onboarding (`/api/admin/resend-onboarding`), and send reminder emails (`/api/admin/send-reminders`).
 
 ## Merchant Onboarding
 
 New vendors can complete a simple onboarding form under `/onboarding` to submit business information, bank details, and a preferred payment provider. The form posts to `/api/onboarding/submit`.
+
 
 ### KYC Verification via Stripe Identity
 
@@ -36,6 +42,7 @@ After submitting the onboarding form, merchants can be redirected to FortisPay's
 ### Square OAuth Onboarding
 
 Merchants that prefer Square can connect their account using the OAuth flow. Clicking **Connect with Square** sends them to `/api/square/connect` which generates the Square authorization URL. Square redirects back to `/api/square/callback` where the app exchanges the code for an access token and stores `squareMerchantId` and `squareAccessToken` on the merchant record.
+
 
 ### Stripe Connect Payouts
 
@@ -71,6 +78,7 @@ See the `multi-gateway-connector` directory for a base connector that unifies th
 Admins can view all transactions at `/admin/analytics`. Vendors have their own
 reporting screen at `/vendor/analytics`. Both pages pull data from the database
 so merchants can monitor volume and gateway usage.
+
 
 ## Design Resources
 

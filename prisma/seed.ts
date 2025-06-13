@@ -1,4 +1,4 @@
-import { PrismaClient, Role } from '@prisma/client';
+import { PrismaClient, Role, PricingPlan } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -11,11 +11,11 @@ async function main() {
       userId: 'admin_clerk_id',
       email: 'admin@example.com',
       name: 'Admin',
-      role: Role.ADMIN
-    }
+      role: Role.ADMIN,
+    },
   });
 
-  // Create vendor user and vendor record
+  // Create vendor and vendor user
   const vendor = await prisma.vendor.upsert({
     where: { clerkUserId: 'vendor_clerk_id' },
     update: {},
@@ -23,8 +23,8 @@ async function main() {
       clerkUserId: 'vendor_clerk_id',
       companyName: 'Test Vendor',
       wallet: '0x123',
-      apiKey: 'secret'
-    }
+      apiKey: 'secret',
+    },
   });
 
   const vendorUser = await prisma.user.upsert({
@@ -35,10 +35,11 @@ async function main() {
       email: 'vendor@example.com',
       name: 'Vendor',
       role: Role.VENDOR,
-      vendorId: vendor.id
-    }
+      vendorId: vendor.id,
+    },
   });
 
+  // Create owner KYC record
   const ownerKyc = await prisma.ownerKYC.create({
     data: {
       firstName: 'John',
@@ -46,41 +47,47 @@ async function main() {
       ssnLast4: '1234',
       dob: new Date('1990-01-01'),
       address: '123 Test St',
-    }
+    },
   });
 
-  const merchant = await prisma.merchant.create({
-    data: {
-      userId: 'vendor_clerk_id',
-      businessName: 'Vendor Biz',
-      businessType: 'LLC',
-      contactEmail: 'vendor@example.com',
-      providerPreference: 'First Data',
-      ownerKycId: ownerKyc.id,
-      fiservStatus: 'PENDING',
-      worldpayStatus: 'PENDING',
-      pricingPlan: 'STARTER',
-    }
-  });
-
+  // Create bank account and nested merchant
   await prisma.bankAccount.create({
     data: {
       bankName: 'Bank',
       routingNumber: '123456789',
       accountNumber: '987654321',
-      merchantId: merchant.id,
-    }
+      voidedCheckUrl: null,
+      merchant: {
+        create: {
+          userId: 'vendor_clerk_id',
+          businessName: 'Vendor Biz',
+          businessType: 'LLC',
+          website: 'https://vendor.biz',
+          contactEmail: 'vendor@example.com',
+          preferredProvider: 'First Data',
+          ownerKycId: ownerKyc.id,
+          pricingPlan: PricingPlan.STARTER,
+          fiservStatus: 'PENDING',
+          worldpayStatus: 'PENDING',
+        },
+      },
+    },
   });
 
+  // Create transactions
   await prisma.transaction.createMany({
     data: [
       { userId: admin.id, amount: 1000, gateway: 'stripe' },
-      { userId: vendorUser.id, amount: 2000, gateway: 'fortis' }
-    ]
+      { userId: vendorUser.id, amount: 2000, gateway: 'fortis' },
+    ],
   });
+
+  console.log('Seeding complete.');
 }
 
-main().catch(e => {
-  console.error(e);
-  process.exit(1);
-}).finally(() => prisma.$disconnect());
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(() => prisma.$disconnect());

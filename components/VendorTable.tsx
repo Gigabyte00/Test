@@ -20,39 +20,45 @@ export default function VendorTable() {
     mutate();
   };
 
-  const filtered = data.filter(v =>
+  const filtered = data.filter((v) =>
     v.companyName?.toLowerCase().includes(query.toLowerCase())
   );
+
   return (
     <div>
       <input
         placeholder="Search company"
         value={query}
-        onChange={e => setQuery(e.target.value)}
-        style={{ marginBottom: 8 }}
+        onChange={(e) => setQuery(e.target.value)}
+        className="mb-3 p-2 border rounded w-full max-w-sm"
       />
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Company</th>
-          <th>Wallet</th>
-          <th>API Key</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {filtered.map(v => (
-          <tr key={v.id}>
-            <td>{v.id}</td>
-            <td>{v.companyName}</td>
-            <td>{v.wallet}</td>
-            <td>{v.apiKey}</td>
-            <td><button onClick={() => updateVendor(v.id)}>Edit</button></td>
+
+      <table className="min-w-full text-sm border-collapse border border-gray-300">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="p-2 border">ID</th>
+            <th className="p-2 border">Company</th>
+            <th className="p-2 border">Wallet</th>
+            <th className="p-2 border">API Key</th>
+            <th className="p-2 border">Actions</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {filtered.map((v) => (
+            <tr key={v.id} className="border-t">
+              <td className="p-2 border">{v.id}</td>
+              <td className="p-2 border">{v.companyName}</td>
+              <td className="p-2 border">{v.wallet}</td>
+              <td className="p-2 border">{v.apiKey}</td>
+              <td className="p-2 border">
+                <button onClick={() => updateVendor(v.id)} className="text-blue-600 underline text-sm">
+                  Edit
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

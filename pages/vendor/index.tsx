@@ -14,6 +14,7 @@ export default function VendorDashboard() {
         <Link href="/profile">Profile</Link>
         {' | '}
         <Link href="/vendor/analytics">Analytics</Link>
+
       </SignedIn>
       <SignedOut>
         <p>Please sign in</p>

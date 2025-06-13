@@ -1,44 +1,136 @@
-import { useEffect, useState } from 'react';
+import { prisma } from '../../lib/prisma';
+import { GetServerSideProps } from 'next';
+import { useState, useEffect } from 'react';
 
-export default function Dashboard() {
-  const [merchants, setMerchants] = useState<any[]>([]);
+export const getServerSideProps: GetServerSideProps = async () => {
+  const merchants = await prisma.merchant.findMany({
+    include: {
+      bankAccount: true,
+      ownerKyc: true,
+    },
+  });
+
+  return { props: { merchants } };
+};
+
+export default function Dashboard({ merchants }: any) {
+  const [selected, setSelected] = useState<any>(null);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
-    fetch('/api/admin/merchants')
-      .then((res) => res.json())
-      .then((data) => setMerchants(data));
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   }, []);
 
+  const filtered = merchants
+    .filter((m: any) =>
+      m.businessName.toLowerCase().includes(query.toLowerCase()) ||
+      m.contactEmail.toLowerCase().includes(query.toLowerCase())
+    )
+    .sort((a: any, b: any) => a.businessName.localeCompare(b.businessName));
+
+  const markStatus = async (userId: string, type: string) => {
+    await fetch('/api/admin/mark-status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, type }),
+    });
+    alert('Status updated!');
+  };
+
+  const resendOnboarding = async (userId: string, type: string) => {
+    await fetch('/api/admin/resend-onboarding', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, type }),
+    });
+    alert(`${type} onboarding resent.`);
+  };
+
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Onboarding Dashboard</h1>
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-sm border-collapse border border-gray-700 dark:text-white">
-          <thead>
-            <tr className="bg-gray-200 dark:bg-zinc-800">
-              <th className="px-4 py-2 border">Business</th>
-              <th className="px-4 py-2 border">Preferred</th>
-              <th className="px-4 py-2 border">First Data</th>
-              <th className="px-4 py-2 border">WorldPay</th>
-              <th className="px-4 py-2 border">PaySafe</th>
-              <th className="px-4 py-2 border">Square</th>
-              <th className="px-4 py-2 border">NMI</th>
+    <div className="bg-white dark:bg-gray-900 text-black dark:text-white min-h-screen">
+      <div className="max-w-6xl mx-auto p-8">
+        <h1 className="text-2xl font-bold mb-6">Merchant Onboarding Dashboard</h1>
+
+        <input
+          type="text"
+          placeholder="Search by business or email"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          className="mb-4 px-4 py-2 border w-full rounded"
+        />
+
+        <table className="min-w-full bg-white shadow rounded overflow-hidden text-sm">
+          <thead className="bg-gray-100 dark:bg-zinc-800 font-semibold">
+            <tr>
+              <th className="p-3 text-left">Business</th>
+              <th className="p-3 text-left">Contact</th>
+              <th className="p-3 text-left">Provider</th>
+              <th className="p-3 text-center">Stripe</th>
+              <th className="p-3 text-center">KYC</th>
+              <th className="p-3 text-center">Fortis</th>
+              <th className="p-3 text-center">Crypto</th>
+              <th className="p-3 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {merchants.map((m: any) => (
-              <tr key={m.id} className="border-t">
-                <td className="px-4 py-2 border">{m.businessName}</td>
-                <td className="px-4 py-2 border">{m.providerPreference}</td>
-                <td className="px-4 py-2 border">{m.fiservStatus || '-'}</td>
-                <td className="px-4 py-2 border">{m.worldpayStatus || '-'}</td>
-                <td className="px-4 py-2 border">{m.paysafeStatus || '-'}</td>
-                <td className="px-4 py-2 border">{m.squareMerchantId ? '✔' : '-'}</td>
-                <td className="px-4 py-2 border">{m.nmiGatewayId ? '✔' : '-'}</td>
+            {filtered.map((m: any) => (
+              <tr key={m.id} className="border-b hover:bg-gray-50 dark:hover:bg-zinc-800">
+                <td className="p-3">{m.businessName}</td>
+                <td className="p-3">{m.contactEmail}</td>
+                <td className="p-3">{m.preferredProvider || '-'}</td>
+                <td className="p-3 text-center">{m.stripeAccountId ? '✅' : '❌'}</td>
+                <td className="p-3 text-center">{m.kycStatus === 'KYC_VERIFIED' ? '✅' : '❌'}</td>
+                <td className="p-3 text-center">{m.fortisMerchantId ? '✅' : '❌'}</td>
+                <td className="p-3 text-center">{m.cryptoWallet ? '✅' : '❌'}</td>
+                <td className="p-3 text-center">
+                  <button
+                    onClick={() => setSelected(m)}
+                    className="text-blue-600 underline text-sm"
+                  >
+                    View
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+
+        {selected && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-zinc-900 w-full max-w-xl rounded-lg p-6 relative">
+              <h2 className="text-xl font-semibold mb-4">Merchant Details</h2>
+              <button
+                onClick={() => setSelected(null)}
+                className="absolute top-3 right-3 text-gray-600 hover:text-black dark:hover:text-white"
+              >
+                ✕
+              </button>
+              <div className="space-y-3 text-sm">
+                <p><strong>Business:</strong> {selected.businessName}</p>
+                <p><strong>Contact:</strong> {selected.contactEmail}</p>
+                <p><strong>Website:</strong> {selected.website}</p>
+                <p><strong>Plan:</strong> {selected.pricingPlan}</p>
+                <p><strong>Provider:</strong> {selected.preferredProvider}</p>
+                <p><strong>Bank:</strong> {selected.bankAccount?.bankName} ****{selected.bankAccount?.accountNumber?.slice(-4)}</p>
+                <p><strong>Owner:</strong> {selected.ownerKyc?.firstName} {selected.ownerKyc?.lastName}</p>
+                <p><strong>Crypto Wallet:</strong> {selected.cryptoWallet || 'Not linked'}</p>
+
+                <div className="flex gap-4 mt-4 flex-wrap">
+                  <button onClick={() => markStatus(selected.userId, 'kyc')} className="btn">Mark KYC ✅</button>
+                  <button onClick={() => markStatus(selected.userId, 'stripe')} className="btn">Mark Stripe ✅</button>
+                  <button onClick={() => markStatus(selected.userId, 'fortis')} className="btn">Mark Fortis ✅</button>
+                  <button onClick={() => resendOnboarding(selected.userId, 'stripe')} className="btn-outline">Resend Stripe</button>
+                  <button onClick={() => resendOnboarding(selected.userId, 'fortis')} className="btn-outline">Resend Fortis</button>
+                  <button onClick={() => resendOnboarding(selected.userId, 'kyc')} className="btn-outline">Resend KYC</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
