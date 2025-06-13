@@ -51,8 +51,8 @@ model Merchant {
   businessType        String
   website             String?
   contactEmail        String
-  bankAccount         BankAccount @relation(fields: [bankAccountId], references: [id])
-  bankAccountId       String
+  bankAccount         BankAccount? @relation(fields: [bankAccountId], references: [id])
+  bankAccountId       String?
   ownerKyc            OwnerKYC    @relation(fields: [ownerKycId], references: [id])
   ownerKycId          String
   kycStatus           String?     @default("PENDING")

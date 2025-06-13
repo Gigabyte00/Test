@@ -51,7 +51,7 @@ async function main() {
   });
 
   // Create bank account and nested merchant
-  const bankAccount = await prisma.bankAccount.create({
+  await prisma.bankAccount.create({
     data: {
       bankName: 'Bank',
       routingNumber: '123456789',
@@ -72,10 +72,9 @@ async function main() {
         },
       },
     },
-    include: { merchant: true },
   });
 
-  // Create transactions for both users
+  // Create transactions
   await prisma.transaction.createMany({
     data: [
       { userId: admin.id, amount: 1000, gateway: 'stripe' },

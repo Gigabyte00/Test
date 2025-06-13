@@ -12,6 +12,9 @@ export default function VendorDashboard() {
         <h2>Vendor Dashboard</h2>
         <p>Welcome {user?.firstName}</p>
         <Link href="/profile">Profile</Link>
+        {' | '}
+        <Link href="/vendor/analytics">Analytics</Link>
+
       </SignedIn>
       <SignedOut>
         <p>Please sign in</p>

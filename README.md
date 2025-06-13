@@ -5,16 +5,20 @@ This project demonstrates account management using **Clerk**, **Next.js**, and *
 ## Setup
 
 1. Copy `.env.example` to `.env` and fill in database, Clerk, Stripe, First Data/Fiserv, Square, NMI, and other gateway credentials.
-
 2. Run `npx prisma generate` and `npx prisma migrate dev` to set up the database.
 3. Seed the database with `npm run seed`.
-   Run `npm run seed:clerk` to create matching Clerk users.
+   Then run `npm run seed:clerk` to create matching Clerk users via the
+   `scripts/seedClerkUsers.ts` utility. This ensures each Prisma user record
+   has a corresponding account in Clerk for authentication.
+
+
 4. Start the app with `npm run dev`.
 
 Routes under `/dashboard` require login. Admin pages under `/admin` are restricted to admin users and vendor pages under `/vendor` are restricted to vendors.
 The profile page lets users manage passwords and toggle 2FA.
 
 Admin users can lock or unlock accounts, reset passwords, and edit vendor details from the admin dashboard. An analytics screen under `/admin/analytics` shows recent transactions.
+
 
 
 
@@ -68,6 +72,13 @@ This app integrates multiple payment providers using a unified adapter pattern. 
 The `lib/paymentRouter.ts` file routes transactions to the appropriate adapter.
 
 See the `multi-gateway-connector` directory for a base connector that unifies these APIs.
+
+## Analytics
+
+Admins can view all transactions at `/admin/analytics`. Vendors have their own
+reporting screen at `/vendor/analytics`. Both pages pull data from the database
+so merchants can monitor volume and gateway usage.
+
 
 ## Design Resources
 

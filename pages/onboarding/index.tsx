@@ -124,9 +124,9 @@ export default function OnboardingWizard() {
 
         {step === 3 && (
           <>
-            <label className="block"><input type="radio" {...register('pricingPlan')} value="Starter" /> Starter</label>
-            <label className="block"><input type="radio" {...register('pricingPlan')} value="Pro" /> Pro</label>
-            <label className="block"><input type="radio" {...register('pricingPlan')} value="Custom" /> Custom</label>
+            <label><input type="radio" {...register('pricingPlan')} value="Starter" /> Starter</label>
+            <label><input type="radio" {...register('pricingPlan')} value="Pro" /> Pro</label>
+            <label><input type="radio" {...register('pricingPlan')} value="Custom" /> Custom</label>
           </>
         )}
 
