@@ -25,6 +25,7 @@ export default function Dashboard({ merchants }: any) {
     }
   }, []);
 
+
   const filtered = merchants
     .filter((m: any) =>
       m.businessName.toLowerCase().includes(query.toLowerCase()) ||
@@ -132,4 +133,3 @@ export default function Dashboard({ merchants }: any) {
     </div>
   );
 }
-
