@@ -3,20 +3,36 @@ import formidable from 'formidable';
 import { prisma } from '../../lib/prisma';
 
 export const config = {
-  api: { bodyParser: false }
+  api: { bodyParser: false },
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const form = formidable({ uploadDir: "./public/uploads", keepExtensions: true });
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+    return res.status(405).end('Method Not Allowed');
+  }
+
+  const form = formidable({ uploadDir: './public/uploads', keepExtensions: true });
 
   form.parse(req, async (err, fields, files) => {
     if (err) return res.status(500).json({ error: 'Parse error' });
 
     const {
-      businessName, businessType, website, contact,
-      bankName, routing, account,
-      firstName, lastName, ssn, dob, address,
-      pricingPlan, clerkId
+      businessName,
+      businessType,
+      website,
+      contact,
+      bankName,
+      routing,
+      account,
+      firstName,
+      lastName,
+      ssn,
+      dob,
+      address,
+      pricingPlan,
+      clerkId,
+      preferredProvider,
     } = fields as Record<string, any>;
 
     const voidedCheck = (files as any).voidCheck?.[0]?.newFilename || null;
@@ -25,34 +41,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const bankAccount = await prisma.bankAccount.create({
         data: {
-          bankName: bankName as string,
-          routingNumber: routing as string,
-          accountNumber: account as string,
+          bankName: bankName || 'Unknown',
+          routingNumber: routing,
+          accountNumber: account,
           voidedCheckUrl: voidedCheck ? `/uploads/${voidedCheck}` : undefined,
         },
       });
 
       const ownerKyc = await prisma.ownerKYC.create({
         data: {
-          firstName: firstName as string,
-          lastName: lastName as string,
-          ssnLast4: ssn as string,
-          dob: new Date(dob as string),
-          address: address as string,
+          firstName,
+          lastName,
+          ssnLast4: ssn,
+          dob: new Date(dob),
+          address,
           govIdUrl: govId ? `/uploads/${govId}` : undefined,
         },
       });
 
       await prisma.merchant.create({
         data: {
-          userId: clerkId as string,
-          businessName: businessName as string,
-          businessType: businessType as string,
-          website: website as string,
-          contactEmail: contact as string,
+          userId: clerkId,
+          businessName,
+          businessType,
+          website,
+          contactEmail: contact,
           bankAccountId: bankAccount.id,
           ownerKycId: ownerKyc.id,
-          pricingPlan: pricingPlan as any,
+          pricingPlan,
+          preferredProvider,
         },
       });
 

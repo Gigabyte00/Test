@@ -6,6 +6,7 @@ interface User {
   email: string;
   role: Role;
   createdAt: string;
+  userId: string;
 }
 
 export default function UserTable() {
@@ -18,6 +19,25 @@ export default function UserTable() {
       body: JSON.stringify({ id, role })
     });
   };
+
+  const lock = async (userId: string, state: boolean) => {
+    await fetch('/api/admin/lock-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clerkId: userId, lock: state })
+    });
+  };
+
+  const resetPw = async (userId: string) => {
+    const pw = prompt('New password');
+    if (!pw) return;
+    await fetch('/api/admin/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clerkId: userId, password: pw })
+    });
+  };
+
 
   if (!data) return <p>Loading...</p>;
   return (
@@ -41,10 +61,13 @@ export default function UserTable() {
             <td>
               {u.role !== 'ADMIN' && (
                 <button onClick={() => promote(u.id, Role.ADMIN)}>Promote</button>
-              )}
+              )}{' '}
               {u.role !== 'CUSTOMER' && (
                 <button onClick={() => promote(u.id, Role.CUSTOMER)}>Demote</button>
-              )}
+              )}{' '}
+              <button onClick={() => lock(u.userId, true)}>Lock</button>{' '}
+              <button onClick={() => lock(u.userId, false)}>Unlock</button>{' '}
+              <button onClick={() => resetPw(u.userId)}>Reset PW</button>
             </td>
           </tr>
         ))}

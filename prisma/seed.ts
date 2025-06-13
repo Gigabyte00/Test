@@ -63,6 +63,8 @@ async function main() {
       businessName: 'Vendor Biz',
       businessType: 'LLC',
       contactEmail: 'vendor@example.com',
+      preferredProvider: 'First Data',
+
       bankAccountId: bankAccount.id,
       ownerKycId: ownerKyc.id,
       fiservStatus: 'PENDING',

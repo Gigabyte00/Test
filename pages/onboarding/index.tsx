@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,6 +20,7 @@ const schema = z.object({
   ssn: z.string().length(4),
   dob: z.string(),
   address: z.string(),
+  preferredProvider: z.enum(['First Data', 'WorldPay', 'PaySafe', 'Square', 'NMI']),
   pricingPlan: z.enum(['Starter', 'Pro', 'Custom']),
   govId: z.any().optional(),
   voidCheck: z.any().optional(),
@@ -32,6 +34,7 @@ const steps = ['Business Info', 'Bank Info', 'KYC', 'Pricing Plan', 'Review'];
 export default function OnboardingWizard() {
   const { user } = useUser();
   const [step, setStep] = useState(0);
+
   const {
     register,
     handleSubmit,
@@ -42,79 +45,35 @@ export default function OnboardingWizard() {
 
   const next = async () => {
     const valid = await trigger();
-    if (valid) setStep(s => Math.min(s + 1, steps.length - 1));
+    if (valid) setStep((s) => Math.min(s + 1, steps.length - 1));
   };
-  const back = () => setStep(s => Math.max(s - 1, 0));
+
+  const back = () => setStep((s) => Math.max(s - 1, 0));
 
   const onSubmit = async (data: any) => {
     const formData = new FormData();
-    Object.entries(data).forEach(([k, v]) => {
-      if (v instanceof FileList) {
-        if (v.length > 0) formData.append(k, v[0]);
+    Object.entries(data).forEach(([key, val]) => {
+      if (val instanceof FileList && val.length > 0) {
+        formData.append(key, val[0]);
       } else {
-        formData.append(k, v as string);
+        formData.append(key, val as string);
       }
     });
     formData.append('clerkId', user?.id || '');
-    const res = await fetch('/onboarding/api/submit', { method: 'POST', body: formData });
-    alert(res.ok ? 'Submitted!' : 'Error');
-  };
 
-
-  const startKyc = async () => {
-    const res = await fetch('/api/kyc/create-session', {
+    const res = await fetch('/api/onboarding/submit', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: user?.id }),
+      body: formData,
     });
-    if (res.ok) {
-      const { url } = await res.json();
-      window.location.href = url as string;
-    } else {
-      alert('Failed to start KYC');
-    }
-  };
 
-  const startFortis = async () => {
-    const res = await fetch('/api/fortis/startApplication', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        businessName: watch('businessName'),
-        contactEmail: watch('contact'),
-        userId: user?.id
-      })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      window.location.href = data.applicationUrl;
-    } else {
-      alert('Failed to start Fortis application');
-    }
-  };
-
-
-  const startStripeConnect = async () => {
-    const res = await fetch('/api/stripe/connect', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId: user?.id,
-        email: watch('contact'),
-      }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      window.location.href = data.url;
-    } else {
-      alert('Failed to start Stripe onboarding');
-    }
+    alert(res.ok ? 'Submitted successfully!' : 'Error submitting form.');
   };
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl mx-auto p-6 bg-white rounded shadow">
       <h2 className="text-xl font-bold mb-4">Step {step + 1}: {steps[step]}</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+
         {step === 0 && (
           <>
             <input {...register('businessName')} placeholder="Business Name" className="input" />
@@ -126,18 +85,28 @@ export default function OnboardingWizard() {
               <option value="Non-Profit">Non-Profit</option>
             </select>
             <input {...register('website')} placeholder="Website URL" className="input" />
-            <input {...register('contact')} placeholder="Email" className="input" />
+            <input {...register('contact')} placeholder="Contact Email" className="input" />
+            <label>Preferred Provider</label>
+            <select {...register('preferredProvider')} className="input">
+              <option value="First Data">First Data</option>
+              <option value="WorldPay">WorldPay</option>
+              <option value="PaySafe">PaySafe</option>
+              <option value="Square">Square</option>
+              <option value="NMI">NMI</option>
+            </select>
           </>
         )}
+
         {step === 1 && (
           <>
             <input {...register('bankName')} placeholder="Bank Name" className="input" />
             <input {...register('routing')} placeholder="Routing Number" className="input" />
             <input {...register('account')} placeholder="Account Number" className="input" />
             <input {...register('confirmAccount')} placeholder="Confirm Account" className="input" />
-            <label className="block">Upload Voided Check <input type="file" {...register('voidCheck')} /></label>
+            <label>Upload Voided Check <input type="file" {...register('voidCheck')} /></label>
           </>
         )}
+
         {step === 2 && (
           <>
             <input {...register('firstName')} placeholder="First Name" className="input" />
@@ -145,10 +114,10 @@ export default function OnboardingWizard() {
             <input {...register('ssn')} placeholder="Last 4 of SSN" className="input" />
             <input {...register('dob')} type="date" className="input" />
             <input {...register('address')} placeholder="Address" className="input" />
-            <label className="block">Upload Government ID <input type="file" {...register('govId')} /></label>
-            <button type="button" onClick={startKyc} className="btn-primary mt-2">Verify Identity with Stripe</button>
+            <label>Upload Government ID <input type="file" {...register('govId')} /></label>
           </>
         )}
+
         {step === 3 && (
           <>
             <label className="block"><input type="radio" {...register('pricingPlan')} value="Starter" /> Starter</label>
@@ -156,13 +125,13 @@ export default function OnboardingWizard() {
             <label className="block"><input type="radio" {...register('pricingPlan')} value="Custom" /> Custom</label>
           </>
         )}
+
         {step === 4 && (
           <>
             <pre className="bg-gray-100 p-4 rounded text-xs overflow-x-auto">{JSON.stringify(watch(), null, 2)}</pre>
-            <button type="button" onClick={startFortis} className="btn-primary mt-4">Complete Fortis Application</button>
-            <button type="button" onClick={startStripeConnect} className="btn-primary mt-2">Setup Stripe Payouts</button>
           </>
         )}
+
         <div className="flex justify-between">
           {step > 0 && <button type="button" onClick={back} className="btn">Back</button>}
           {step < steps.length - 1 ? (
