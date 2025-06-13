@@ -69,6 +69,7 @@ async function main() {
     }
   });
 
+
   await prisma.transaction.createMany({
     data: [
       { userId: admin.id, amount: 1000, gateway: 'stripe' },
