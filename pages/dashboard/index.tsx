@@ -122,4 +122,3 @@ export default function Dashboard({ merchants }: any) {
     </div>
   );
 }
-

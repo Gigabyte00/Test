@@ -63,6 +63,7 @@ model Merchant {
   fortisMerchantId String?  @unique
   stripeAccountId String?  @unique
   cryptoWallet  String?
+
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 }
