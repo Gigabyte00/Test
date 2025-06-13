@@ -66,6 +66,7 @@ model Merchant {
   worldpayStatus String?  @default("PENDING")
   paysafeStatus  String?  @default("PENDING")
   cryptoWallet  String?
+
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 }

@@ -67,9 +67,11 @@ async function main() {
       ownerKycId: ownerKyc.id,
       fiservStatus: 'PENDING',
       worldpayStatus: 'PENDING',
+
       pricingPlan: 'STARTER',
     }
   });
+
 
   await prisma.transaction.createMany({
     data: [

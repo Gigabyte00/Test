@@ -19,6 +19,7 @@ Admin users can view analytics under `/admin/analytics` to monitor transaction h
 
 Visit `/dashboard` to manage onboarding for all merchants. The dashboard lets you search merchants by business name or email, view details in a modal, manually mark statuses, and resend onboarding links. The backend provides admin API routes to update status (`/api/admin/mark-status`), resend onboarding (`/api/admin/resend-onboarding`), and send reminder emails (`/api/admin/send-reminders`).
 
+
 ## Merchant Onboarding
 
 New vendors can complete a multi-step onboarding wizard under `/onboarding`. The wizard collects business information, bank details, owner KYC, and pricing plan selection before submitting to `/onboarding/api/submit`.
@@ -51,6 +52,7 @@ This app integrates multiple payment providers using a unified adapter pattern. 
 - **PaySafe** – <https://developer.paysafe.com>
   - Submit merchant applications via `/lib/paysafe/onboard.ts` and `/api/paysafe/onboard`
   - Receive webhook updates through `/api/paysafe/webhook`
+
 - **Authorize.Net** – <https://developer.authorize.net/api/reference/>
 - **NMI** – <https://docs.nmi.com>
 
