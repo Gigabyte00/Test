@@ -1,6 +1,6 @@
 import { prisma } from '../../lib/prisma';
 import { GetServerSideProps } from 'next';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const merchants = await prisma.merchant.findMany({
@@ -16,6 +16,15 @@ export const getServerSideProps: GetServerSideProps = async () => {
 export default function Dashboard({ merchants }: any) {
   const [selected, setSelected] = useState<any>(null);
   const [query, setQuery] = useState('');
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
 
   const filtered = merchants
     .filter((m: any) =>
@@ -43,7 +52,8 @@ export default function Dashboard({ merchants }: any) {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-8">
+    <div className="bg-white dark:bg-gray-900 text-black dark:text-white min-h-screen">
+      <div className="max-w-6xl mx-auto p-8">
       <h1 className="text-2xl font-bold mb-6">Merchant Onboarding Dashboard</h1>
 
       <input
@@ -119,6 +129,9 @@ export default function Dashboard({ merchants }: any) {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
+
+
