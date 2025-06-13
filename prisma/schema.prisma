@@ -64,6 +64,7 @@ model Merchant {
   stripeAccountId String?  @unique
   fiservStatus   String?  @default("PENDING")
   worldpayStatus String?  @default("PENDING")
+  paysafeStatus  String?  @default("PENDING")
   cryptoWallet  String?
 
   createdAt     DateTime    @default(now())

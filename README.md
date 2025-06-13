@@ -50,6 +50,9 @@ This app integrates multiple payment providers using a unified adapter pattern. 
   - Submit merchant applications via `/lib/worldpay/onboard.ts` and `/api/worldpay/onboard`
   - Handle status callbacks through `/api/worldpay/webhook`
 - **PaySafe** – <https://developer.paysafe.com>
+  - Submit merchant applications via `/lib/paysafe/onboard.ts` and `/api/paysafe/onboard`
+  - Receive webhook updates through `/api/paysafe/webhook`
+
 - **Authorize.Net** – <https://developer.authorize.net/api/reference/>
 - **NMI** – <https://docs.nmi.com>
 
