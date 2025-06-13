@@ -1,84 +1,150 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
+'use client';
 
-export default function OnboardingPage() {
-  const router = useRouter();
-  const [form, setForm] = useState({
-    businessName: '',
-    contactEmail: '',
-    routingNumber: '',
-    accountNumber: '',
-    preferredProvider: 'First Data',
-  });
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { motion } from 'framer-motion';
+import { useUser } from '@clerk/nextjs';
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+const schema = z.object({
+  businessName: z.string().min(2),
+  businessType: z.string(),
+  website: z.string().url().optional(),
+  contact: z.string().email(),
+  bankName: z.string(),
+  routing: z.string().length(9),
+  account: z.string(),
+  confirmAccount: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  ssn: z.string().length(4),
+  dob: z.string(),
+  address: z.string(),
+  preferredProvider: z.enum(['First Data', 'WorldPay', 'PaySafe', 'Square', 'NMI']),
+  pricingPlan: z.enum(['Starter', 'Pro', 'Custom']),
+  govId: z.any().optional(),
+  voidCheck: z.any().optional(),
+}).refine(d => d.account === d.confirmAccount, {
+  path: ['confirmAccount'],
+  message: 'Account numbers must match',
+});
+
+const steps = ['Business Info', 'Bank Info', 'KYC', 'Pricing Plan', 'Review'];
+
+export default function OnboardingWizard() {
+  const { user } = useUser();
+  const [step, setStep] = useState(0);
+
+  const {
+    register,
+    handleSubmit,
+    trigger,
+    watch,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(schema), mode: 'onChange' });
+
+  const next = async () => {
+    const valid = await trigger();
+    if (valid) setStep((s) => Math.min(s + 1, steps.length - 1));
   };
 
-  const handleSubmit = async () => {
+  const back = () => setStep((s) => Math.max(s - 1, 0));
+
+  const onSubmit = async (data: any) => {
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, val]) => {
+      if (val instanceof FileList && val.length > 0) {
+        formData.append(key, val[0]);
+      } else {
+        formData.append(key, val as string);
+      }
+    });
+    formData.append('clerkId', user?.id || '');
+
     const res = await fetch('/api/onboarding/submit', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
+      body: formData,
     });
 
-    if (res.ok) {
-      alert('Submitted successfully!');
-      router.push('/dashboard');
-    } else {
-      alert('Submission failed.');
-    }
+    alert(res.ok ? 'Submitted successfully!' : 'Error submitting form.');
   };
 
   return (
-    <div className="p-6 max-w-xl mx-auto bg-white dark:bg-zinc-900 shadow-md rounded">
-      <h1 className="text-2xl font-bold mb-4">Merchant Onboarding</h1>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="max-w-2xl mx-auto p-6 bg-white dark:bg-zinc-900 rounded shadow"
+    >
+      <h2 className="text-xl font-bold mb-4">Step {step + 1}: {steps[step]}</h2>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {step === 0 && (
+          <>
+            <input {...register('businessName')} placeholder="Business Name" className="input" />
+            <select {...register('businessType')} className="input">
+              <option value="">Select Type</option>
+              <option value="LLC">LLC</option>
+              <option value="Sole Proprietor">Sole Proprietor</option>
+              <option value="Corp">Corp</option>
+              <option value="Non-Profit">Non-Profit</option>
+            </select>
+            <input {...register('website')} placeholder="Website URL" className="input" />
+            <input {...register('contact')} placeholder="Contact Email" className="input" />
+            <label>Preferred Provider</label>
+            <select {...register('preferredProvider')} className="input">
+              <option value="First Data">First Data</option>
+              <option value="WorldPay">WorldPay</option>
+              <option value="PaySafe">PaySafe</option>
+              <option value="Square">Square</option>
+              <option value="NMI">NMI</option>
+            </select>
+          </>
+        )}
 
-      <input
-        name="businessName"
-        placeholder="Business Name"
-        className="w-full mb-3 p-2 border dark:bg-zinc-800"
-        onChange={handleChange}
-      />
-      <input
-        name="contactEmail"
-        placeholder="Contact Email"
-        className="w-full mb-3 p-2 border dark:bg-zinc-800"
-        onChange={handleChange}
-      />
-      <input
-        name="routingNumber"
-        placeholder="Routing Number"
-        className="w-full mb-3 p-2 border dark:bg-zinc-800"
-        onChange={handleChange}
-      />
-      <input
-        name="accountNumber"
-        placeholder="Account Number"
-        className="w-full mb-3 p-2 border dark:bg-zinc-800"
-        onChange={handleChange}
-      />
+        {step === 1 && (
+          <>
+            <input {...register('bankName')} placeholder="Bank Name" className="input" />
+            <input {...register('routing')} placeholder="Routing Number" className="input" />
+            <input {...register('account')} placeholder="Account Number" className="input" />
+            <input {...register('confirmAccount')} placeholder="Confirm Account" className="input" />
+            <label>Upload Voided Check <input type="file" {...register('voidCheck')} /></label>
+          </>
+        )}
 
-      <label className="block text-sm font-semibold mb-1">Preferred Provider</label>
-      <select
-        name="preferredProvider"
-        value={form.preferredProvider}
-        onChange={handleChange}
-        className="w-full mb-4 p-2 border dark:bg-zinc-800"
-      >
-        <option value="First Data">First Data</option>
-        <option value="WorldPay">WorldPay</option>
-        <option value="PaySafe">PaySafe</option>
-        <option value="Square">Square</option>
-        <option value="NMI">NMI</option>
-      </select>
+        {step === 2 && (
+          <>
+            <input {...register('firstName')} placeholder="First Name" className="input" />
+            <input {...register('lastName')} placeholder="Last Name" className="input" />
+            <input {...register('ssn')} placeholder="Last 4 of SSN" className="input" />
+            <input {...register('dob')} type="date" className="input" />
+            <input {...register('address')} placeholder="Address" className="input" />
+            <label>Upload Government ID <input type="file" {...register('govId')} /></label>
+          </>
+        )}
 
-      <button
-        className="bg-blue-600 text-white px-4 py-2 rounded w-full"
-        onClick={handleSubmit}
-      >
-        Submit Application
-      </button>
-    </div>
+        {step === 3 && (
+          <>
+            <label className="block"><input type="radio" {...register('pricingPlan')} value="Starter" /> Starter</label>
+            <label className="block"><input type="radio" {...register('pricingPlan')} value="Pro" /> Pro</label>
+            <label className="block"><input type="radio" {...register('pricingPlan')} value="Custom" /> Custom</label>
+          </>
+        )}
+
+        {step === 4 && (
+          <pre className="bg-gray-100 p-4 rounded text-xs overflow-x-auto">
+            {JSON.stringify(watch(), null, 2)}
+          </pre>
+        )}
+
+        <div className="flex justify-between">
+          {step > 0 && <button type="button" onClick={back} className="btn">Back</button>}
+          {step < steps.length - 1 ? (
+            <button type="button" onClick={next} className="btn-primary">Next</button>
+          ) : (
+            <button type="submit" className="btn-primary">Submit</button>
+          )}
+        </div>
+      </form>
+    </motion.div>
   );
 }

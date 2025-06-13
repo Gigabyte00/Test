@@ -38,6 +38,7 @@ export default function UserTable() {
     });
   };
 
+
   if (!data) return <p>Loading...</p>;
   return (
     <table>
