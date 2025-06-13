@@ -66,6 +66,7 @@ async function main() {
       bankAccountId: bankAccount.id,
       ownerKycId: ownerKyc.id,
       fiservStatus: 'PENDING',
+      worldpayStatus: 'PENDING',
 
       pricingPlan: 'STARTER',
     }

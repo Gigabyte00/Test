@@ -46,7 +46,9 @@ This app integrates multiple payment providers using a unified adapter pattern. 
 - **First Data / Fiserv BuyPass** – <https://developer.firstdata.com>
   - Submit merchant applications via `/lib/firstdata/onboard.ts` and `/api/firstdata/onboard`
   - Handle approval updates through `/api/firstdata/webhook`
-- **Worldpay** – <https://developer.worldpay.com>
+- **Worldpay / TSYS** – <https://developer.worldpay.com>
+  - Submit merchant applications via `/lib/worldpay/onboard.ts` and `/api/worldpay/onboard`
+  - Handle status callbacks through `/api/worldpay/webhook`
 - **PaySafe** – <https://developer.paysafe.com>
 - **Authorize.Net** – <https://developer.authorize.net/api/reference/>
 - **NMI** – <https://docs.nmi.com>
