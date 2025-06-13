@@ -16,21 +16,21 @@ enum Role {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  userId    String   @unique // Clerk user ID
-  email     String   @unique
-  name      String?
-  phone     String?
-  role      Role     @default(CUSTOMER)
-  vendorId  Int?
-  vendor    Vendor?  @relation(fields: [vendorId], references: [id])
-  createdAt DateTime @default(now())
+  id          Int           @id @default(autoincrement())
+  userId      String        @unique // Clerk user ID
+  email       String        @unique
+  name        String?
+  phone       String?
+  role        Role          @default(CUSTOMER)
+  vendorId    Int?
+  vendor      Vendor?       @relation(fields: [vendorId], references: [id])
+  createdAt   DateTime      @default(now())
   transactions Transaction[]
 }
 
 model Vendor {
-  id          Int     @id @default(autoincrement())
-  clerkUserId String  @unique
+  id          Int      @id @default(autoincrement())
+  clerkUserId String   @unique
   companyName String?
   wallet      String?
   apiKey      String?
@@ -47,32 +47,31 @@ model Transaction {
 }
 
 model Merchant {
-  id            String      @id @default(cuid())
-  userId        String      // Clerk user ID
-  businessName  String
-  businessType  String
-  website       String?
-  contactEmail  String
-  bankAccount   BankAccount @relation(fields: [bankAccountId], references: [id])
-  bankAccountId String
-  ownerKyc      OwnerKYC    @relation(fields: [ownerKycId], references: [id])
-  ownerKycId    String
-  kycStatus     String?     @default("PENDING")
-  pricingPlan   PricingPlan @default(STARTER)
-  status        String?     @default("PENDING")
-  fortisMerchantId String?  @unique
-  stripeAccountId String?  @unique
-  fiservStatus   String?  @default("PENDING")
-  worldpayStatus String?  @default("PENDING")
-  paysafeStatus  String?  @default("PENDING")
-  cryptoWallet  String?
-  squareAccessToken String?
-  squareMerchantId  String?
-  nmiGatewayId  String?
-  preferredProvider String?
-
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id                  String      @id @default(cuid())
+  userId              String      // Clerk user ID
+  businessName        String
+  businessType        String
+  website             String?
+  contactEmail        String
+  bankAccount         BankAccount @relation(fields: [bankAccountId], references: [id])
+  bankAccountId       String
+  ownerKyc            OwnerKYC    @relation(fields: [ownerKycId], references: [id])
+  ownerKycId          String
+  kycStatus           String?     @default("PENDING")
+  pricingPlan         PricingPlan @default(STARTER)
+  status              String?     @default("PENDING")
+  fortisMerchantId    String?     @unique
+  stripeAccountId     String?     @unique
+  fiservStatus        String?     @default("PENDING")
+  worldpayStatus      String?     @default("PENDING")
+  paysafeStatus       String?     @default("PENDING")
+  cryptoWallet        String?
+  squareAccessToken   String?
+  squareMerchantId    String?
+  nmiGatewayId        String?
+  preferredProvider   String?
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
 }
 
 model BankAccount {
@@ -81,7 +80,8 @@ model BankAccount {
   routingNumber  String
   accountNumber  String
   voidedCheckUrl String?
-  merchant       Merchant?
+  merchantId     String   @unique
+  merchant       Merchant @relation(fields: [merchantId], references: [id])
 }
 
 model OwnerKYC {

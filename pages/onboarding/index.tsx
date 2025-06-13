@@ -1,4 +1,6 @@
+// OnboardingWizard.tsx — Cleaned up version based on `main` branch
 'use client';
+
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -70,10 +72,13 @@ export default function OnboardingWizard() {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl mx-auto p-6 bg-white rounded shadow">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="max-w-2xl mx-auto p-6 bg-white dark:bg-zinc-900 rounded shadow"
+    >
       <h2 className="text-xl font-bold mb-4">Step {step + 1}: {steps[step]}</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-
         {step === 0 && (
           <>
             <input {...register('businessName')} placeholder="Business Name" className="input" />
@@ -127,9 +132,9 @@ export default function OnboardingWizard() {
         )}
 
         {step === 4 && (
-          <>
-            <pre className="bg-gray-100 p-4 rounded text-xs overflow-x-auto">{JSON.stringify(watch(), null, 2)}</pre>
-          </>
+          <pre className="bg-gray-100 p-4 rounded text-xs overflow-x-auto">
+            {JSON.stringify(watch(), null, 2)}
+          </pre>
         )}
 
         <div className="flex justify-between">
