@@ -59,6 +59,8 @@ export default function OnboardingWizard() {
     const res = await fetch('/onboarding/api/submit', { method: 'POST', body: formData });
     alert(res.ok ? 'Submitted!' : 'Error');
   };
+
+
   const startKyc = async () => {
     const res = await fetch('/api/kyc/create-session', {
       method: 'POST',
@@ -72,6 +74,8 @@ export default function OnboardingWizard() {
       alert('Failed to start KYC');
     }
   };
+
+
   const startFortis = async () => {
     const res = await fetch('/api/fortis/startApplication', {
       method: 'POST',
@@ -89,6 +93,8 @@ export default function OnboardingWizard() {
       alert('Failed to start Fortis application');
     }
   };
+
+
   const startStripeConnect = async () => {
     const res = await fetch('/api/stripe/connect', {
       method: 'POST',

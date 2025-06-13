@@ -62,6 +62,8 @@ model Merchant {
   status        String?     @default("PENDING")
   fortisMerchantId String?  @unique
   stripeAccountId String?  @unique
+  cryptoWallet  String?
+
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 }

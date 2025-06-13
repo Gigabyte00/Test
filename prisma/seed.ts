@@ -39,6 +39,37 @@ async function main() {
     }
   });
 
+  const bankAccount = await prisma.bankAccount.create({
+    data: {
+      bankName: 'Bank',
+      routingNumber: '123456789',
+      accountNumber: '987654321',
+    }
+  });
+
+  const ownerKyc = await prisma.ownerKYC.create({
+    data: {
+      firstName: 'John',
+      lastName: 'Doe',
+      ssnLast4: '1234',
+      dob: new Date('1990-01-01'),
+      address: '123 Test St',
+    }
+  });
+
+  await prisma.merchant.create({
+    data: {
+      userId: 'vendor_clerk_id',
+      businessName: 'Vendor Biz',
+      businessType: 'LLC',
+      contactEmail: 'vendor@example.com',
+      bankAccountId: bankAccount.id,
+      ownerKycId: ownerKyc.id,
+      pricingPlan: 'STARTER',
+    }
+  });
+
+
   await prisma.transaction.createMany({
     data: [
       { userId: admin.id, amount: 1000, gateway: 'stripe' },
