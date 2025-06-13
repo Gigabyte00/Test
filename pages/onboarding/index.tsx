@@ -1,4 +1,3 @@
-// OnboardingWizard.tsx — Cleaned up version based on `main` branch
 'use client';
 
 import React, { useState } from 'react';

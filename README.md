@@ -17,6 +17,7 @@ The profile page lets users manage passwords and toggle 2FA.
 Admin users can lock or unlock accounts, reset passwords, and edit vendor details from the admin dashboard. An analytics screen under `/admin/analytics` shows recent transactions.
 
 
+
 ### Merchant Onboarding Dashboard
 
 Visit `/dashboard` to manage onboarding for all merchants. The dashboard lets you search merchants by business name or email, view details in a modal, manually mark statuses, and resend onboarding links. The backend provides admin API routes to update status (`/api/admin/mark-status`), resend onboarding (`/api/admin/resend-onboarding`), and send reminder emails (`/api/admin/send-reminders`).
