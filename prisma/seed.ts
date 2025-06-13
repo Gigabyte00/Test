@@ -65,6 +65,8 @@ async function main() {
       contactEmail: 'vendor@example.com',
       bankAccountId: bankAccount.id,
       ownerKycId: ownerKyc.id,
+      fiservStatus: 'PENDING',
+
       pricingPlan: 'STARTER',
     }
   });

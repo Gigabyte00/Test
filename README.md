@@ -4,7 +4,7 @@ This project demonstrates account management using **Clerk**, **Next.js**, and *
 
 ## Setup
 
-1. Copy `.env.example` to `.env` and fill in database, Clerk, Stripe, and other gateway credentials.
+1. Copy `.env.example` to `.env` and fill in database, Clerk, Stripe, First Data/Fiserv, and other gateway credentials.
 2. Run `npx prisma generate` and `npx prisma migrate dev` to set up the database.
 3. Seed the database with `npm run seed`.
    Run `npm run seed:clerk` to create matching Clerk users.
@@ -43,7 +43,9 @@ This app integrates multiple payment providers using a unified adapter pattern. 
 - **Stripe** – <https://stripe.com/docs/api>
 - **Square** – <https://developer.squareup.com/docs>
 - **FortisPay** – <https://docs.fortispay.com>
-- **First Data** – <https://developer.firstdata.com>
+- **First Data / Fiserv BuyPass** – <https://developer.firstdata.com>
+  - Submit merchant applications via `/lib/firstdata/onboard.ts` and `/api/firstdata/onboard`
+  - Handle approval updates through `/api/firstdata/webhook`
 - **Worldpay** – <https://developer.worldpay.com>
 - **PaySafe** – <https://developer.paysafe.com>
 - **Authorize.Net** – <https://developer.authorize.net/api/reference/>
