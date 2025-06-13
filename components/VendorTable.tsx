@@ -27,6 +27,7 @@ export default function VendorTable() {
           <th>Wallet</th>
           <th>API Key</th>
           <th></th>
+
         </tr>
       </thead>
       <tbody>
@@ -37,6 +38,7 @@ export default function VendorTable() {
             <td>{v.wallet}</td>
             <td>{v.apiKey}</td>
             <td><button onClick={() => updateVendor(v.id)}>Edit</button></td>
+
           </tr>
         ))}
       </tbody>
